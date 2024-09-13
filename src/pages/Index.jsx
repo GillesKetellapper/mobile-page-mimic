@@ -15,14 +15,17 @@ const Index = () => {
   const [shareTeam, setShareTeam] = useState(false);
   const [shareMyself, setShareMyself] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [audioBlob, setAudioBlob] = useState(null);
+  const [photos, setPhotos] = useState([]);
   const recognitionRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     if ('webkitSpeechRecognition' in window) {
       recognitionRef.current = new window.webkitSpeechRecognition();
       recognitionRef.current.continuous = true;
       recognitionRef.current.interimResults = true;
-      recognitionRef.current.lang = 'nl-NL'; // Set language to Dutch
+      recognitionRef.current.lang = 'nl-NL';
 
       recognitionRef.current.onresult = (event) => {
         const transcript = Array.from(event.results)
@@ -52,6 +55,11 @@ const Index = () => {
     if (recognitionRef.current) {
       if (isRecording) {
         recognitionRef.current.stop();
+        // Create an audio blob when stopping the recording
+        recognitionRef.current.onstop = () => {
+          const audioBlob = new Blob([], { type: 'audio/wav' });
+          setAudioBlob(audioBlob);
+        };
       } else {
         setTranscription('');
         recognitionRef.current.start();
@@ -64,6 +72,38 @@ const Index = () => {
 
   const handleMakeUpdate = () => {
     window.open('https://docs.google.com/document/d/1l6oekThZo5-pj6EgwKGM3Nv-Dzn3B3z6BquB10ZekPM/edit', '_blank');
+  };
+
+  const handleTakePhoto = () => {
+    // This is a mock function. In a real app, you'd use the device's camera API.
+    const mockPhoto = { id: Date.now(), url: 'https://via.placeholder.com/150' };
+    setPhotos([...photos, mockPhoto]);
+    alert('Photo taken! (This is a mock function)');
+  };
+
+  const handleUploadPhoto = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const newPhoto = { id: Date.now(), url: e.target.result };
+        setPhotos([...photos, newPhoto]);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handlePlayAudio = () => {
+    if (audioBlob) {
+      const audio = new Audio(URL.createObjectURL(audioBlob));
+      audio.play();
+    } else {
+      alert('No audio recording available to play.');
+    }
   };
 
   return (
@@ -98,7 +138,7 @@ const Index = () => {
               <Button variant="secondary" onClick={toggleRecording}>
                 {isRecording ? 'Stop opname' : 'Neem op'}
               </Button>
-              <Button variant="secondary">Afspelen</Button>
+              <Button variant="secondary" onClick={handlePlayAudio}>Afspelen</Button>
               <Button variant="secondary">Upload</Button>
             </div>
           </div>
@@ -117,14 +157,26 @@ const Index = () => {
           <div>
             <Label>Foto's</Label>
             <div className="flex space-x-2 mt-2">
-              <Button variant="secondary">
+              <Button variant="secondary" onClick={handleTakePhoto}>
                 <Camera className="w-4 h-4 mr-2" />
                 Maak foto's
               </Button>
-              <Button variant="secondary">
+              <Button variant="secondary" onClick={handleUploadPhoto}>
                 <RefreshCw className="w-4 h-4 mr-2" />
                 Upload
               </Button>
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                accept="image/*"
+                style={{ display: 'none' }}
+              />
+            </div>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {photos.map((photo) => (
+                <img key={photo.id} src={photo.url} alt="Uploaded" className="w-20 h-20 object-cover rounded" />
+              ))}
             </div>
           </div>
 
