@@ -1,12 +1,120 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import React, { useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Home, Camera, RefreshCw, ClipboardList, MoreHorizontal } from 'lucide-react';
 
 const Index = () => {
+  const [selectedProject, setSelectedProject] = useState('');
+  const [title, setTitle] = useState('');
+  const [transcription, setTranscription] = useState('');
+  const [shareOwner, setShareOwner] = useState(false);
+  const [shareTeam, setShareTeam] = useState(false);
+  const [shareMyself, setShareMyself] = useState(false);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-gray-100 flex flex-col">
+      <header className="bg-indigo-700 text-white p-4">
+        <h1 className="text-xl font-bold">Updates</h1>
+      </header>
+
+      <main className="flex-grow p-4">
+        <div className="bg-white rounded-lg shadow p-4 space-y-4">
+          <div>
+            <Select value={selectedProject} onValueChange={setSelectedProject}>
+              <Select.Trigger className="w-full">
+                <Select.Value placeholder="Alle projecten" />
+              </Select.Trigger>
+              <Select.Content>
+                <Select.Item value="all">Alle projecten</Select.Item>
+                {/* Add more project options here */}
+              </Select.Content>
+            </Select>
+          </div>
+
+          <div>
+            <Label htmlFor="title">Titel van de update</Label>
+            <Input id="title" placeholder="Voer een titel in" value={title} onChange={(e) => setTitle(e.target.value)} />
+          </div>
+
+          <div>
+            <Label>Spraakbericht</Label>
+            <p className="text-sm text-gray-500">Beschrijf de voortgang, problemen en volgende stappen</p>
+            <div className="flex space-x-2 mt-2">
+              <Button variant="secondary">Neem op</Button>
+              <Button variant="secondary">Afspelen</Button>
+              <Button variant="secondary">Upload</Button>
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="transcription">Transcriptie</Label>
+            <Textarea id="transcription" placeholder="Transcriptie verschijnt hier..." value={transcription} onChange={(e) => setTranscription(e.target.value)} />
+          </div>
+
+          <div>
+            <Label>Foto's</Label>
+            <div className="flex space-x-2 mt-2">
+              <Button variant="secondary">
+                <Camera className="w-4 h-4 mr-2" />
+                Maak foto's
+              </Button>
+              <Button variant="secondary">
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Upload
+              </Button>
+            </div>
+          </div>
+
+          <div>
+            <Label>Delen met</Label>
+            <div className="space-y-2">
+              <div className="flex items-center">
+                <Checkbox id="owner" checked={shareOwner} onCheckedChange={setShareOwner} />
+                <label htmlFor="owner" className="ml-2">Eigenaar</label>
+              </div>
+              <div className="flex items-center">
+                <Checkbox id="team" checked={shareTeam} onCheckedChange={setShareTeam} />
+                <label htmlFor="team" className="ml-2">Interne team</label>
+              </div>
+              <div className="flex items-center">
+                <Checkbox id="myself" checked={shareMyself} onCheckedChange={setShareMyself} />
+                <label htmlFor="myself" className="ml-2">Mijzelf</label>
+              </div>
+            </div>
+          </div>
+
+          <Button className="w-full">Maak update</Button>
+        </div>
+      </main>
+
+      <footer className="bg-white border-t">
+        <nav className="flex justify-around p-2">
+          <Button variant="ghost" className="flex flex-col items-center">
+            <Home className="w-6 h-6" />
+            <span className="text-xs">Home</span>
+          </Button>
+          <Button variant="ghost" className="flex flex-col items-center">
+            <Camera className="w-6 h-6" />
+            <span className="text-xs">Opname</span>
+          </Button>
+          <Button variant="ghost" className="flex flex-col items-center">
+            <RefreshCw className="w-6 h-6" />
+            <span className="text-xs">Update</span>
+          </Button>
+          <Button variant="ghost" className="flex flex-col items-center">
+            <ClipboardList className="w-6 h-6" />
+            <span className="text-xs">Inspectie</span>
+          </Button>
+          <Button variant="ghost" className="flex flex-col items-center">
+            <MoreHorizontal className="w-6 h-6" />
+            <span className="text-xs">Meer</span>
+          </Button>
+        </nav>
+      </footer>
     </div>
   );
 };
