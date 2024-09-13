@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,6 +14,48 @@ const Index = () => {
   const [shareOwner, setShareOwner] = useState(false);
   const [shareTeam, setShareTeam] = useState(false);
   const [shareMyself, setShareMyself] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+
+  useEffect(() => {
+    let recognition = null;
+
+    if ('webkitSpeechRecognition' in window) {
+      recognition = new window.webkitSpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'nl-NL'; // Set language to Dutch
+
+      recognition.onresult = (event) => {
+        const transcript = Array.from(event.results)
+          .map(result => result[0].transcript)
+          .join('');
+        setTranscription(transcript);
+      };
+
+      recognition.onerror = (event) => {
+        console.error('Speech recognition error', event.error);
+        setIsRecording(false);
+      };
+
+      recognition.onend = () => {
+        setIsRecording(false);
+      };
+    }
+
+    return () => {
+      if (recognition) recognition.abort();
+    };
+  }, []);
+
+  const toggleRecording = () => {
+    if (isRecording) {
+      window.webkitSpeechRecognition.stop();
+    } else {
+      setTranscription('');
+      window.webkitSpeechRecognition.start();
+    }
+    setIsRecording(!isRecording);
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
@@ -44,7 +86,9 @@ const Index = () => {
             <Label>Spraakbericht</Label>
             <p className="text-sm text-gray-500">Beschrijf de voortgang, problemen en volgende stappen</p>
             <div className="flex space-x-2 mt-2">
-              <Button variant="secondary">Neem op</Button>
+              <Button variant="secondary" onClick={toggleRecording}>
+                {isRecording ? 'Stop opname' : 'Neem op'}
+              </Button>
               <Button variant="secondary">Afspelen</Button>
               <Button variant="secondary">Upload</Button>
             </div>
@@ -52,7 +96,13 @@ const Index = () => {
 
           <div>
             <Label htmlFor="transcription">Transcriptie</Label>
-            <Textarea id="transcription" placeholder="Transcriptie verschijnt hier..." value={transcription} onChange={(e) => setTranscription(e.target.value)} />
+            <Textarea 
+              id="transcription" 
+              placeholder="Transcriptie verschijnt hier..." 
+              value={transcription} 
+              onChange={(e) => setTranscription(e.target.value)}
+              className="h-32"
+            />
           </div>
 
           <div>
@@ -94,23 +144,23 @@ const Index = () => {
       <footer className="bg-white border-t">
         <nav className="flex justify-around p-2">
           <Button variant="ghost" className="flex flex-col items-center">
-            <Home className="w-6 h-6" />
+            <Home className="w-8 h-8" />
             <span className="text-xs">Home</span>
           </Button>
           <Button variant="ghost" className="flex flex-col items-center">
-            <Camera className="w-6 h-6" />
+            <Camera className="w-8 h-8" />
             <span className="text-xs">Opname</span>
           </Button>
           <Button variant="ghost" className="flex flex-col items-center">
-            <RefreshCw className="w-6 h-6" />
+            <RefreshCw className="w-8 h-8" />
             <span className="text-xs">Update</span>
           </Button>
           <Button variant="ghost" className="flex flex-col items-center">
-            <ClipboardList className="w-6 h-6" />
+            <ClipboardList className="w-8 h-8" />
             <span className="text-xs">Inspectie</span>
           </Button>
           <Button variant="ghost" className="flex flex-col items-center">
-            <MoreHorizontal className="w-6 h-6" />
+            <MoreHorizontal className="w-8 h-8" />
             <span className="text-xs">Meer</span>
           </Button>
         </nav>
