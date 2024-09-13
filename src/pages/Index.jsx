@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,46 +15,51 @@ const Index = () => {
   const [shareTeam, setShareTeam] = useState(false);
   const [shareMyself, setShareMyself] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const recognitionRef = useRef(null);
 
   useEffect(() => {
-    let recognition = null;
-
     if ('webkitSpeechRecognition' in window) {
-      recognition = new window.webkitSpeechRecognition();
-      recognition.continuous = true;
-      recognition.interimResults = true;
-      recognition.lang = 'nl-NL'; // Set language to Dutch
+      recognitionRef.current = new window.webkitSpeechRecognition();
+      recognitionRef.current.continuous = true;
+      recognitionRef.current.interimResults = true;
+      recognitionRef.current.lang = 'nl-NL'; // Set language to Dutch
 
-      recognition.onresult = (event) => {
+      recognitionRef.current.onresult = (event) => {
         const transcript = Array.from(event.results)
           .map(result => result[0].transcript)
           .join('');
         setTranscription(transcript);
       };
 
-      recognition.onerror = (event) => {
+      recognitionRef.current.onerror = (event) => {
         console.error('Speech recognition error', event.error);
         setIsRecording(false);
       };
 
-      recognition.onend = () => {
+      recognitionRef.current.onend = () => {
         setIsRecording(false);
       };
     }
 
     return () => {
-      if (recognition) recognition.abort();
+      if (recognitionRef.current) {
+        recognitionRef.current.abort();
+      }
     };
   }, []);
 
   const toggleRecording = () => {
-    if (isRecording) {
-      window.webkitSpeechRecognition.stop();
+    if (recognitionRef.current) {
+      if (isRecording) {
+        recognitionRef.current.stop();
+      } else {
+        setTranscription('');
+        recognitionRef.current.start();
+      }
+      setIsRecording(!isRecording);
     } else {
-      setTranscription('');
-      window.webkitSpeechRecognition.start();
+      console.error('Speech recognition is not supported in this browser.');
     }
-    setIsRecording(!isRecording);
   };
 
   return (
@@ -144,23 +149,23 @@ const Index = () => {
       <footer className="bg-white border-t">
         <nav className="flex justify-around p-2">
           <Button variant="ghost" className="flex flex-col items-center">
-            <Home className="w-8 h-8" />
+            <Home className="w-10 h-10" />
             <span className="text-xs">Home</span>
           </Button>
           <Button variant="ghost" className="flex flex-col items-center">
-            <Camera className="w-8 h-8" />
+            <Camera className="w-10 h-10" />
             <span className="text-xs">Opname</span>
           </Button>
           <Button variant="ghost" className="flex flex-col items-center">
-            <RefreshCw className="w-8 h-8" />
+            <RefreshCw className="w-10 h-10" />
             <span className="text-xs">Update</span>
           </Button>
           <Button variant="ghost" className="flex flex-col items-center">
-            <ClipboardList className="w-8 h-8" />
+            <ClipboardList className="w-10 h-10" />
             <span className="text-xs">Inspectie</span>
           </Button>
           <Button variant="ghost" className="flex flex-col items-center">
-            <MoreHorizontal className="w-8 h-8" />
+            <MoreHorizontal className="w-10 h-10" />
             <span className="text-xs">Meer</span>
           </Button>
         </nav>
