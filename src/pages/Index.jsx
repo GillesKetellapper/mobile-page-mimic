@@ -18,11 +18,11 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       <header className="bg-indigo-700 text-white p-4">
-        <h1 className="text-xl font-bold">Updates</h1>
+        <h1 className="text-xl font-bold text-center">Updates</h1>
       </header>
 
-      <main className="flex-grow p-4">
-        <div className="bg-white rounded-lg shadow p-4 space-y-4">
+      <main className="flex-grow p-4 flex justify-center items-start">
+        <div className="bg-white rounded-lg shadow p-4 space-y-4 max-w-md w-full">
           <div>
             <Select value={selectedProject} onValueChange={setSelectedProject}>
               <SelectTrigger className="w-full">
