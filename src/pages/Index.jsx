@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select } from "@/components/ui/select";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Home, Camera, RefreshCw, ClipboardList, MoreHorizontal } from 'lucide-react';
@@ -25,13 +25,13 @@ const Index = () => {
         <div className="bg-white rounded-lg shadow p-4 space-y-4">
           <div>
             <Select value={selectedProject} onValueChange={setSelectedProject}>
-              <Select.Trigger className="w-full">
-                <Select.Value placeholder="Alle projecten" />
-              </Select.Trigger>
-              <Select.Content>
-                <Select.Item value="all">Alle projecten</Select.Item>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Alle projecten" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Alle projecten</SelectItem>
                 {/* Add more project options here */}
-              </Select.Content>
+              </SelectContent>
             </Select>
           </div>
 
