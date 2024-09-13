@@ -6,6 +6,8 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Home, Camera, RefreshCw, ClipboardList, MoreHorizontal } from 'lucide-react';
+import { UpdateForm } from './components/UpdateForm';
+import { Footer } from './components/Footer';
 
 const Index = () => {
   const [selectedProject, setSelectedProject] = useState('');
@@ -55,7 +57,6 @@ const Index = () => {
     if (recognitionRef.current) {
       if (isRecording) {
         recognitionRef.current.stop();
-        // Create an audio blob when stopping the recording
         recognitionRef.current.onstop = () => {
           const audioBlob = new Blob([], { type: 'audio/wav' });
           setAudioBlob(audioBlob);
@@ -75,7 +76,6 @@ const Index = () => {
   };
 
   const handleTakePhoto = () => {
-    // This is a mock function. In a real app, you'd use the device's camera API.
     const mockPhoto = { id: Date.now(), url: 'https://via.placeholder.com/150' };
     setPhotos([...photos, mockPhoto]);
     alert('Photo taken! (This is a mock function)');
@@ -113,119 +113,32 @@ const Index = () => {
       </header>
 
       <main className="flex-grow p-4 flex justify-center items-start">
-        <div className="bg-white rounded-lg shadow p-4 space-y-4 max-w-md w-full">
-          <div>
-            <Select value={selectedProject} onValueChange={setSelectedProject}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Alle projecten" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Alle projecten</SelectItem>
-                {/* Add more project options here */}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <Label htmlFor="title">Titel van de update</Label>
-            <Input id="title" placeholder="Voer een titel in" value={title} onChange={(e) => setTitle(e.target.value)} />
-          </div>
-
-          <div>
-            <Label>Spraakbericht</Label>
-            <p className="text-sm text-gray-500">Beschrijf de voortgang, problemen en volgende stappen</p>
-            <div className="flex space-x-2 mt-2">
-              <Button variant="secondary" onClick={toggleRecording}>
-                {isRecording ? 'Stop opname' : 'Neem op'}
-              </Button>
-              <Button variant="secondary" onClick={handlePlayAudio}>Afspelen</Button>
-              <Button variant="secondary">Upload</Button>
-            </div>
-          </div>
-
-          <div>
-            <Label htmlFor="transcription">Transcriptie</Label>
-            <Textarea 
-              id="transcription" 
-              placeholder="Transcriptie verschijnt hier..." 
-              value={transcription} 
-              onChange={(e) => setTranscription(e.target.value)}
-              className="h-32"
-            />
-          </div>
-
-          <div>
-            <Label>Foto's</Label>
-            <div className="flex space-x-2 mt-2">
-              <Button variant="secondary" onClick={handleTakePhoto}>
-                <Camera className="w-4 h-4 mr-2" />
-                Maak foto's
-              </Button>
-              <Button variant="secondary" onClick={handleUploadPhoto}>
-                <RefreshCw className="w-4 h-4 mr-2" />
-                Upload
-              </Button>
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-                accept="image/*"
-                style={{ display: 'none' }}
-              />
-            </div>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {photos.map((photo) => (
-                <img key={photo.id} src={photo.url} alt="Uploaded" className="w-20 h-20 object-cover rounded" />
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <Label>Delen met</Label>
-            <div className="space-y-2">
-              <div className="flex items-center">
-                <Checkbox id="owner" checked={shareOwner} onCheckedChange={setShareOwner} />
-                <label htmlFor="owner" className="ml-2">Eigenaar</label>
-              </div>
-              <div className="flex items-center">
-                <Checkbox id="team" checked={shareTeam} onCheckedChange={setShareTeam} />
-                <label htmlFor="team" className="ml-2">Interne team</label>
-              </div>
-              <div className="flex items-center">
-                <Checkbox id="myself" checked={shareMyself} onCheckedChange={setShareMyself} />
-                <label htmlFor="myself" className="ml-2">Mijzelf</label>
-              </div>
-            </div>
-          </div>
-
-          <Button className="w-full" onClick={handleMakeUpdate}>Maak update</Button>
-        </div>
+        <UpdateForm
+          selectedProject={selectedProject}
+          setSelectedProject={setSelectedProject}
+          title={title}
+          setTitle={setTitle}
+          transcription={transcription}
+          setTranscription={setTranscription}
+          shareOwner={shareOwner}
+          setShareOwner={setShareOwner}
+          shareTeam={shareTeam}
+          setShareTeam={setShareTeam}
+          shareMyself={shareMyself}
+          setShareMyself={setShareMyself}
+          isRecording={isRecording}
+          toggleRecording={toggleRecording}
+          handlePlayAudio={handlePlayAudio}
+          handleTakePhoto={handleTakePhoto}
+          handleUploadPhoto={handleUploadPhoto}
+          fileInputRef={fileInputRef}
+          handleFileChange={handleFileChange}
+          photos={photos}
+          handleMakeUpdate={handleMakeUpdate}
+        />
       </main>
 
-      <footer className="bg-white border-t">
-        <nav className="flex justify-around p-2">
-          <Button variant="ghost" className="flex flex-col items-center">
-            <Home className="w-12 h-12" />
-            <span className="text-xs">Home</span>
-          </Button>
-          <Button variant="ghost" className="flex flex-col items-center">
-            <Camera className="w-12 h-12" />
-            <span className="text-xs">Opname</span>
-          </Button>
-          <Button variant="ghost" className="flex flex-col items-center">
-            <RefreshCw className="w-12 h-12" />
-            <span className="text-xs">Update</span>
-          </Button>
-          <Button variant="ghost" className="flex flex-col items-center">
-            <ClipboardList className="w-12 h-12" />
-            <span className="text-xs">Inspectie</span>
-          </Button>
-          <Button variant="ghost" className="flex flex-col items-center">
-            <MoreHorizontal className="w-12 h-12" />
-            <span className="text-xs">Meer</span>
-          </Button>
-        </nav>
-      </footer>
+      <Footer />
     </div>
   );
 };
