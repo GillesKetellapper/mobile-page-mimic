@@ -62,6 +62,10 @@ const Index = () => {
     }
   };
 
+  const handleMakeUpdate = () => {
+    window.open('https://docs.google.com/document/d/1l6oekThZo5-pj6EgwKGM3Nv-Dzn3B3z6BquB10ZekPM/edit', '_blank');
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       <header className="bg-indigo-700 text-white p-4">
@@ -142,30 +146,30 @@ const Index = () => {
             </div>
           </div>
 
-          <Button className="w-full">Maak update</Button>
+          <Button className="w-full" onClick={handleMakeUpdate}>Maak update</Button>
         </div>
       </main>
 
       <footer className="bg-white border-t">
         <nav className="flex justify-around p-2">
           <Button variant="ghost" className="flex flex-col items-center">
-            <Home className="w-10 h-10" />
+            <Home className="w-12 h-12" />
             <span className="text-xs">Home</span>
           </Button>
           <Button variant="ghost" className="flex flex-col items-center">
-            <Camera className="w-10 h-10" />
+            <Camera className="w-12 h-12" />
             <span className="text-xs">Opname</span>
           </Button>
           <Button variant="ghost" className="flex flex-col items-center">
-            <RefreshCw className="w-10 h-10" />
+            <RefreshCw className="w-12 h-12" />
             <span className="text-xs">Update</span>
           </Button>
           <Button variant="ghost" className="flex flex-col items-center">
-            <ClipboardList className="w-10 h-10" />
+            <ClipboardList className="w-12 h-12" />
             <span className="text-xs">Inspectie</span>
           </Button>
           <Button variant="ghost" className="flex flex-col items-center">
-            <MoreHorizontal className="w-10 h-10" />
+            <MoreHorizontal className="w-12 h-12" />
             <span className="text-xs">Meer</span>
           </Button>
         </nav>
